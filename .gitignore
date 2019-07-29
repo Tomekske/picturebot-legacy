@@ -45,7 +45,6 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
-.pytest_cache/
 
 # Translations
 *.mo
@@ -100,3 +99,5 @@ ENV/
 
 # mypy
 .mypy_cache/
+*.bat
+.vscode/launch.json
