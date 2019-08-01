@@ -4,10 +4,10 @@
 """Tests for `picturebot` package."""
 
 import os
-import random
 import unittest
 import picturebot.helper as helper
 import generalutils.guard as grd
+
 class TestGeneralUtils(unittest.TestCase):
 
     def test_FullFilePathExists(self):

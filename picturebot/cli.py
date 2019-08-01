@@ -1,11 +1,11 @@
 """Console script for picturebot."""
 import sys
+import os
+import json
 import click
-#from picturebott import FullFilePath 
 import picturebot.helper as helper
 import generalutils.guard as grd
-import json
-import os
+
 
 def Location(path):
     click.echo(f'Config file location: {path}')
