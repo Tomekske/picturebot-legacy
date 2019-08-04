@@ -28,6 +28,7 @@ setup(
     entry_points={
         'console_scripts': [
             'picturebot=picturebot.cli:main',
+            'pb=picturebot.cli:main',
         ],
     },
     install_requires=requirements,
@@ -41,6 +42,6 @@ setup(
     test_suite='tests',
     tests_require=requirements,
     url='https://github.com/Tomekske/picturebot',
-    version='0.0.2',
+    version='0.0.3',
     zip_safe=False,
 )
