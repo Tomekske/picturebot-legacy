@@ -1,10 +1,11 @@
 {
-    "workplace": "D:\\Programs\\PictureBot\\TEST",
+    "workplace": "D:\\PicTest",
     "workflow" : [
-        "Files",
-        "Modded",
-        "Natural",
+        "RAW",
+        "Selected",
+        "Edited",
+        "Affinity",
         "Instagram"
     ],
-    "baseflow" : "Natural"
+    "baseflow" : "RAW"
 }

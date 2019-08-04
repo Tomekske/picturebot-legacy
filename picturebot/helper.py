@@ -41,4 +41,3 @@ def CreateFolder(path):
 
         # Check whether creation was successfull
         grd.Filesystem.PathExist(path)
-        print(f'Created flow: {path}')
