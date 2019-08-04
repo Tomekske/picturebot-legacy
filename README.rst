@@ -26,7 +26,21 @@ Program to ease picture development flow
 Features
 --------
 
-* TODO
+* Create a workspace directory
+* Create flows within the workspace directory
+* Renaming filenames according to the project within a certain flow
+
+
+TODO
+----
+
+* Update documentation
+* Multiple workspaces support
+* Copy config file location to the clipboard
+* Automatically open the config file location
+* Check whether every picture within a certain project flow is edited
+* Upload pictures to google pictures
+
 
 Credits
 -------
