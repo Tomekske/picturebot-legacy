@@ -19,3 +19,8 @@ History
 * Upgrade from argparse to click
 * Added unit test
 * Added config file location command
+
+0.0.3 (2019-08-04)
+------------------
+
+* Added a shorthand notation to call the program from the command line
