@@ -138,7 +138,6 @@ def Version():
 @click.option('--rename', '-r', is_flag=True, help='Rename the files in the main flow directory')
 @click.option('--location', '-l', is_flag=True, help='Config file location')
 @click.option('--version', '-v', is_flag=True, help='Script version')
-# @pass_config
 def main(create,rename, location, version):
     """Console script for picturebot."""
     
@@ -164,4 +163,4 @@ def main(create,rename, location, version):
         click.echo('No arguments were passed, please enter --help for more information')
 
 if __name__ == "__main__":
-    main()
+    main() # pragma: no cover
