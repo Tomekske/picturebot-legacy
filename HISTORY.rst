@@ -24,3 +24,12 @@ History
 ------------------
 
 * Added a shorthand notation to call the program from the command line
+
+0.0.4 (2019-08-04)
+------------------
+
+* A workspace can only be created within the declared workspace directory specified within the config file
+* Files can only be renamed within the baseflow directory
+* Only changed files names are listed in the output 
+* Only missing project flows are getting added when renaming files
+* Added command to check the script version
