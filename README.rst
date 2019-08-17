@@ -30,6 +30,7 @@ Features
 * Create flows within the workspace directory
 * Renaming filenames according to the project within a certain flow
 * Create a backup of the baseflow directory
+* Automatically open the config file
 
 
 TODO
@@ -37,8 +38,6 @@ TODO
 
 * Update documentation
 * Multiple workspaces support
-* Copy config file location to the clipboard
-* Automatically open the config file location
 * Check whether every picture within a certain project flow is edited
 * Upload pictures to google pictures
 

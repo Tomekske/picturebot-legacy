@@ -6,7 +6,6 @@
 import os
 import unittest
 import picturebot.helper as helper
-import generalutils.guard as grd
 
 class TestGeneralUtils(unittest.TestCase):
 

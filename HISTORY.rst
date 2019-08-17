@@ -30,8 +30,8 @@ History
 
 * A workspace can only be created within the declared workspace directory specified within the config file
 * Files can only be renamed within the baseflow directory
-* Only changed files names are listed in the output 
-* Only missing project flows are getting added when renaming files
+* Bug fix: Only changed files names are listed in the output 
+* Bug fix: Only missing project flows are getting added when renaming files
 * Added command to check the script version
 
 0.0.5 (2019-08-17)
@@ -39,3 +39,9 @@ History
 
 * Create a backup of the baseflow directory
 * Added a backup attribute within the config file
+
+0.0.6 (2019-08-17)
+------------------
+
+* Automatically open the config file
+* Bug fix: Only create none existing flows
