@@ -7,6 +7,7 @@ import click
 import picturebot as pb
 import picturebot.helper as helper
 import generalutils.guard as grd
+import shutil
 
 def Location(path):
     '''Config file location method
@@ -72,8 +73,8 @@ def Rename(config):
             # Obtain the path to the project flow
             pathToFlowProject = helper.FullFilePath(config.Workplace,flow,basename)
 
-            # Check if folder exists ...
-            if not grd.Filesystem.IsPath(pathToFlowProject):
+            # Check if folder exists and whether the directory isn't the backup flow
+            if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow != config.Backup):
                 helper.CreateFolder(pathToFlowProject)
 
                 grd.Filesystem.PathExist(pathToFlowProject)
@@ -133,12 +134,91 @@ def Version():
 
     click.echo(f'Script version: {pb.__version__}')
    
+def Backup(config):
+    '''Method to backup files from the baseflow project
+
+    Args:
+        config (Config): Config data object
+    '''
+
+    # Get the current working directory of where the script is executed
+    cwd = os.getcwd()
+
+    # Check whether the current working directory exists
+    grd.Filesystem.PathExist(cwd)
+
+    # Obtain the name of the base directory of the current working directory
+    basename = os.path.basename(cwd)
+    
+    # Obtain the path to the base flow project
+    pathToBaseflowProject = helper.FullFilePath(config.Workplace, config.Baseflow, basename)
+
+    # Check whether the the path to the base flow project exists
+    grd.Filesystem.PathExist(pathToBaseflowProject)
+
+    # Check whether you're within the backup flow directory
+    if cwd == pathToBaseflowProject:
+        # Loop-ver the workflows
+        for flow in config.Workflow:
+            # Obtain the path to the project flow
+            pathToFlowProject = helper.FullFilePath(config.Workplace, flow, basename)
+
+            # Check if folder exists and whether the flow is the backup flow
+            if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow == config.Backup):
+                helper.CreateFolder(pathToFlowProject)
+
+                # Check whether the project is successfully created within the backup directory
+                grd.Filesystem.PathExist(pathToFlowProject)
+
+                click.echo(f'Backup project created: {pathToFlowProject}')
+
+        print('\r\n')
+    else:
+        click.echo(f'Script command should be called from the baseflow directory: {pathToBaseflowProject}')
+
+    # Obtain the filenames within the baseflow directory
+    pictures = os.listdir(cwd)
+
+    counter = 0
+
+    for picture in pictures:
+        # Obtain the path to the baseflow directory
+        pathToBaseflow = helper.FullFilePath(config.Workplace, config.Baseflow, basename)
+        # Check whether the baseflow directory exists
+        grd.Filesystem.PathExist(pathToBaseflow)
+
+        # Obtain the path the source picture within the baseflow directory
+        pathToPictureSource = helper.FullFilePath(pathToBaseflow, picture)
+        # Check whether the source picture path exists
+        grd.Filesystem.PathExist(pathToPictureSource)
+        
+        # Obtain the path to the backupflow directory
+        pathToBackupFlow = helper.FullFilePath(config.Workplace, config.Backup, basename)
+        # Check whether the backupflow directory exists
+        grd.Filesystem.PathExist(pathToBackupFlow)
+
+        # Obtain the full path name to the picture's destition path
+        pathToPictureDestination = helper.FullFilePath(pathToBackupFlow, picture)
+        
+        click.echo(f'Copying: {picture} -> {pathToBackupFlow}')
+
+        # Copying picture from source to destination including the metadata
+        shutil.copy2(pathToPictureSource, pathToPictureDestination)
+
+        # Check whether the file is successfully copied
+        grd.Filesystem.PathExist(pathToPictureDestination)
+
+        counter += 1
+        
+    click.echo(f"Copied files: {counter}")
+
 @click.command()
 @click.option('--create', '-c', is_flag=True, help='Create workspace directory')
 @click.option('--rename', '-r', is_flag=True, help='Rename the files in the main flow directory')
 @click.option('--location', '-l', is_flag=True, help='Config file location')
 @click.option('--version', '-v', is_flag=True, help='Script version')
-def main(create,rename, location, version):
+@click.option('--backup', '-b', is_flag=True, help='Create a backup folder from the baseflow directory')
+def main(create,rename, location, version, backup):
     """Console script for picturebot."""
     
     pathToConfig = helper.FullFilePath("config.json")
@@ -149,7 +229,7 @@ def main(create,rename, location, version):
     with open(pathToConfig) as f:
          # Load data from file
         data = json.load(f)
-        config = helper.Config(data['workplace'], data['workflow'], data['baseflow'])
+        config = helper.Config(data['workplace'], data['workflow'], data['baseflow'], data['backup'])
 
     if create:
         Create(config)
@@ -159,6 +239,8 @@ def main(create,rename, location, version):
         Location(pathToConfig)
     elif version:
         Version()
+    elif backup:
+        Backup(config)
     else:
         click.echo('No arguments were passed, please enter --help for more information')
 

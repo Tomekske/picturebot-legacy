@@ -33,3 +33,9 @@ History
 * Only changed files names are listed in the output 
 * Only missing project flows are getting added when renaming files
 * Added command to check the script version
+
+0.0.5 (2019-08-17)
+------------------
+
+* Create a backup of the baseflow directory
+* Added a backup attribute within the config file
