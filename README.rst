@@ -29,6 +29,7 @@ Features
 * Create a workspace directory
 * Create flows within the workspace directory
 * Renaming filenames according to the project within a certain flow
+* Create a backup of the baseflow directory
 
 
 TODO
