@@ -3,11 +3,12 @@
 import sys
 import os
 import json
+import shutil
+import subprocess
 import click
 import picturebot as pb
 import picturebot.helper as helper
 import generalutils.guard as grd
-import shutil
 
 def Location(path):
     '''Config file location method
@@ -17,6 +18,12 @@ def Location(path):
     '''
 
     click.echo(f'Config file location: {path}')
+
+    # Check whether the the path to the config file exists
+    grd.Filesystem.PathExist(path)
+
+    #  Open the config file
+    os.system(f"start {path}")  
 
 def Create(config):
     '''Setup the workspace method
@@ -34,14 +41,22 @@ def Create(config):
     #Check whether the workplace folder exists    
     grd.Filesystem.PathExist(config.Workplace)
 
+    counter = 0
+
     # Only create the flow when the script is executed from the workspace directory
     if cwd == config.Workplace:
         #Loop-over the workflows
         for flow in config.Workflow:
             pathToFlow = helper.FullFilePath(config.Workplace, flow)
-            helper.CreateFolder(pathToFlow)
-            grd.Filesystem.PathExist(pathToFlow)
-            click.echo(f'Flow created: {pathToFlow}')
+
+            # Only create non existing flows
+            if not grd.Filesystem.IsPath(pathToFlow):
+                helper.CreateFolder(pathToFlow)
+                grd.Filesystem.PathExist(pathToFlow)
+                click.echo(f'Flow created: {pathToFlow}')
+                counter += 1 
+        
+        click.echo(f"Flows created: {counter}")
     else:
         click.echo(f'Script command should be called from the workspace directory: {config.Workplace}')
 
@@ -209,7 +224,7 @@ def Backup(config):
         grd.Filesystem.PathExist(pathToPictureDestination)
 
         counter += 1
-        
+
     click.echo(f"Copied files: {counter}")
 
 @click.command()
