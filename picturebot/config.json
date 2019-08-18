@@ -1,13 +1,15 @@
 {
-    "workplace": "D:\\path\\to\\workplace",
+    "workplace": "D:\\PicTest",
     "workflow": [
         "RAW",
-        "Selected",
+        "Selection",
         "Edited",
         "Affinity",
         "Instagram",
         "Backup"
     ],
     "baseflow": "RAW",
-    "backup": "Backup"
+    "backup": "Backup",
+    "selection": "Selection",
+    "edited": "Edited"
 }

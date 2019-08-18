@@ -215,7 +215,7 @@ def Backup(config):
         # Obtain the full path name to the picture's destition path
         pathToPictureDestination = helper.FullFilePath(pathToBackupFlow, picture)
         
-        click.echo(f'Copying: {picture} -> {pathToBackupFlow}')
+        click.echo(f'Copying: {picture} -> {pathToBackupFlow} [{counter + 1}/{len(pictures)}]')
 
         # Copying picture from source to destination including the metadata
         shutil.copy2(pathToPictureSource, pathToPictureDestination)
@@ -227,13 +227,58 @@ def Backup(config):
 
     click.echo(f"Copied files: {counter}")
 
+def Completed(config):
+    '''Method to check whether a shoot is completely edited 
+
+    Args:
+        config (Config): Config data object
+    '''
+
+    # Get the current working directory of where the script is executed
+    cwd = os.getcwd()
+
+    # Check whether the current working directory exists
+    grd.Filesystem.PathExist(cwd)
+
+    # Check whether the script is executed from the workspace directory
+    if cwd == config.Workplace:
+        # Obtain the path to the the edit root directory
+        pathToEditedRoot = helper.FullFilePath(config.Workplace, config.Edited)
+
+        # Check whether the path to the edit root directory exists
+        grd.Filesystem.PathExist(pathToEditedRoot)
+
+        # Loopover every shoot within the edit directory
+        for shoot in os.listdir(pathToEditedRoot):
+            # Obtain the path to the shoot within the edit root directory
+            pathToEditedShoots = helper.FullFilePath(pathToEditedRoot, shoot)
+
+            # Check whether the shoot exists within the edit root directory
+            grd.Filesystem.PathExist(pathToEditedShoots)
+
+            # Amount of pictures within the edit shoot directory
+            shootAmountPicturesEdited = len(os.listdir(pathToEditedShoots))
+
+            pathToSelectedShoot = helper.FullFilePath(config.Workplace, config.Selection, shoot)
+            grd.Filesystem.PathExist( pathToSelectedShoot)
+
+            # Amount of pictures within the selection shoot directory
+            shootAmountPicturesSelection = len(os.listdir(pathToSelectedShoot))
+
+            # Check whether the amount of pictures are equal
+            if shootAmountPicturesEdited != shootAmountPicturesSelection:
+                print(f'Shoot: {shoot} is not fully edited')
+    else:
+        click.echo(f'Script command should be called from the workspace directory: {config.Workplace}')
+
 @click.command()
 @click.option('--create', '-c', is_flag=True, help='Create workspace directory')
 @click.option('--rename', '-r', is_flag=True, help='Rename the files in the main flow directory')
 @click.option('--location', '-l', is_flag=True, help='Config file location')
 @click.option('--version', '-v', is_flag=True, help='Script version')
 @click.option('--backup', '-b', is_flag=True, help='Create a backup folder from the baseflow directory')
-def main(create,rename, location, version, backup):
+@click.option('--completed', '-cmp', is_flag=True, help='Create a backup folder from the baseflow directory')
+def main(create,rename, location, version, backup, completed):
     """Console script for picturebot."""
     
     pathToConfig = helper.FullFilePath("config.json")
@@ -244,7 +289,7 @@ def main(create,rename, location, version, backup):
     with open(pathToConfig) as f:
          # Load data from file
         data = json.load(f)
-        config = helper.Config(data['workplace'], data['workflow'], data['baseflow'], data['backup'])
+        config = helper.Config(data['workplace'], data['workflow'], data['baseflow'], data['backup'], data['selection'], data['edited'])
 
     if create:
         Create(config)
@@ -256,6 +301,8 @@ def main(create,rename, location, version, backup):
         Version()
     elif backup:
         Backup(config)
+    elif completed:
+        Completed(config)
     else:
         click.echo('No arguments were passed, please enter --help for more information')
 

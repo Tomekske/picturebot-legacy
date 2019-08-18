@@ -45,3 +45,11 @@ History
 
 * Automatically open the config file
 * Bug fix: Only create none existing flows
+
+0.0.7 (2019-08-18)
+------------------
+
+* Display copied files progress
+* Added a selection attribute within the config file
+* Added an attribute within the config file
+* Check whether all the pictures within a shoot are edited
