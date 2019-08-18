@@ -31,6 +31,7 @@ Features
 * Renaming filenames according to the project within a certain flow
 * Create a backup of the baseflow directory
 * Automatically open the config file
+* Check whether all the pictures within a shoot are edited
 
 
 TODO
@@ -38,7 +39,6 @@ TODO
 
 * Update documentation
 * Multiple workspaces support
-* Check whether every picture within a certain project flow is edited
 * Upload pictures to google pictures
 
 

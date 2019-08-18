@@ -10,6 +10,8 @@ class Config:
     Workflow: str = ""
     Baseflow: str = ""
     Backup: str = ""
+    Selection: str = ""
+    Edited: str = ""
 
 def FullFilePath(*items):
     '''Get the full path to a folder or directory
