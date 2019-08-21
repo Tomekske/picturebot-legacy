@@ -239,37 +239,36 @@ def Completed(config):
 
     # Check whether the current working directory exists
     grd.Filesystem.PathExist(cwd)
-
+    
     # Check whether the script is executed from the workspace directory
-    if cwd == config.Workplace:
+    grd.Filesystem.PathCwdExists(config.Workplace, cwd)
+
         # Obtain the path to the the edit root directory
-        pathToEditedRoot = helper.FullFilePath(config.Workplace, config.Edited)
+    pathToEditedRoot = helper.FullFilePath(config.Workplace, config.Edited)
 
-        # Check whether the path to the edit root directory exists
-        grd.Filesystem.PathExist(pathToEditedRoot)
+    # Check whether the path to the edit root directory exists
+    grd.Filesystem.PathExist(pathToEditedRoot)
 
-        # Loopover every shoot within the edit directory
-        for shoot in os.listdir(pathToEditedRoot):
-            # Obtain the path to the shoot within the edit root directory
-            pathToEditedShoots = helper.FullFilePath(pathToEditedRoot, shoot)
+    # Loopover every shoot within the edit directory
+    for shoot in os.listdir(pathToEditedRoot):
+        # Obtain the path to the shoot within the edit root directory
+        pathToEditedShoots = helper.FullFilePath(pathToEditedRoot, shoot)
 
-            # Check whether the shoot exists within the edit root directory
-            grd.Filesystem.PathExist(pathToEditedShoots)
+        # Check whether the shoot exists within the edit root directory
+        grd.Filesystem.PathExist(pathToEditedShoots)
 
-            # Amount of pictures within the edit shoot directory
-            shootAmountPicturesEdited = len(os.listdir(pathToEditedShoots))
+        # Amount of pictures within the edit shoot directory
+        shootAmountPicturesEdited = len(os.listdir(pathToEditedShoots))
 
-            pathToSelectedShoot = helper.FullFilePath(config.Workplace, config.Selection, shoot)
-            grd.Filesystem.PathExist( pathToSelectedShoot)
+        pathToSelectedShoot = helper.FullFilePath(config.Workplace, config.Selection, shoot)
+        grd.Filesystem.PathExist( pathToSelectedShoot)
 
-            # Amount of pictures within the selection shoot directory
-            shootAmountPicturesSelection = len(os.listdir(pathToSelectedShoot))
+        # Amount of pictures within the selection shoot directory
+        shootAmountPicturesSelection = len(os.listdir(pathToSelectedShoot))
 
-            # Check whether the amount of pictures are equal
-            if shootAmountPicturesEdited != shootAmountPicturesSelection:
-                print(f'Shoot: {shoot} is not fully edited')
-    else:
-        click.echo(f'Script command should be called from the workspace directory: {config.Workplace}')
+        # Check whether the amount of pictures are equal
+        if shootAmountPicturesEdited != shootAmountPicturesSelection:
+            print(f'Shoot: {shoot} is not fully edited')
 
 @click.command()
 @click.option('--create', '-c', is_flag=True, help='Create workspace directory')

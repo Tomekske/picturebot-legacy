@@ -11,7 +11,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=6.0', 'generalutils==0.1.4']
+requirements = ['Click>=6.0', 'generalutils']
 
 setup(
     author="Tomek Joostens",
@@ -42,6 +42,6 @@ setup(
     test_suite='tests',
     tests_require=requirements,
     url='https://github.com/Tomekske/picturebot',
-    version='0.0.7',
+    version='0.0.8',
     zip_safe=False,
 )

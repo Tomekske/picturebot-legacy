@@ -53,3 +53,8 @@ History
 * Added a selection attribute within the config file
 * Added an attribute within the config file
 * Check whether all the pictures within a shoot are edited
+
+0.0.8 (2019-08-21)
+------------------
+
+* Checking whether a certain shoot is finished isn't limited to the workspace folder anymore
