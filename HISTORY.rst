@@ -58,3 +58,9 @@ History
 ------------------
 
 * Checking whether a certain shoot is finished isn't limited to the workspace folder anymore
+
+0.0.9 (2019-08-28)
+------------------
+
+* Improvement: Use guard method to check whether the cwd is within the correct directory
+* Open the edited folder from within the selection folder
