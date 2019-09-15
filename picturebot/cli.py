@@ -135,7 +135,7 @@ def Rename(config):
             # Rename the picture file
             os.rename(pathToPicture, pathToNewPicture)
 
-            click.echo(f"Renaming: {picture} -> {newName}")
+            click.echo(f'Renaming: {picture} -> {newName} [{counter + 1}/{len(pictures)}]')
 
             # Check whether the new picture file exists after renaming
             grd.Filesystem.PathExist(pathToNewPicture)
@@ -270,6 +270,55 @@ def Completed(config):
         if shootAmountPicturesEdited != shootAmountPicturesSelection:
             print(f'Shoot: {shoot} is not fully edited')
 
+def Hash():
+    '''Method which renames filenames with their hashed values'''
+    # Get the current working directory of where the script is executed
+    cwd = os.getcwd()
+
+    # Check whether the current working directory exists
+    grd.Filesystem.PathExist(cwd)
+
+    counter = 0
+
+    files = []
+
+    # Obtain the original picture name within a flow directory
+    pictures = os.listdir(cwd)
+
+    # Append files with an extension to a new list
+    for picture in pictures:
+        
+        if '.' in picture:
+            files.append(picture)
+
+    # Loop over every picture withing the flow directory
+    for index, picture in enumerate(files, 1):
+        # Get the extension of the original picture
+        extension = picture.split('.')[1]
+
+        # Get absolute path to the picture
+        pathToPicture = os.path.join(cwd,picture)
+
+        # Check whether the absolute path to the picture is existing
+        grd.Filesystem.PathExist(pathToPicture)
+
+        md5Hash = helper.HashFileMd5(pathToPicture)
+        
+        # Get the new name for the picture
+        newName = f"file_{md5Hash}.{extension}"
+
+        # Obtain the absolute path to the new picture name
+        pathToNewPicture = os.path.join(cwd, newName)
+
+        # Rename the files
+        os.rename(pathToPicture, pathToNewPicture)
+
+        click.echo(f'Renaming: {picture} -> {newName} [{counter + 1}/{len(files)}]')
+
+        counter += 1
+
+    click.echo(f"Renamed files: {counter}")
+
 @click.command()
 @click.option('--create', '-c', is_flag=True, help='Create workspace directory')
 @click.option('--rename', '-r', is_flag=True, help='Rename the files in the main flow directory')
@@ -277,7 +326,8 @@ def Completed(config):
 @click.option('--version', '-v', is_flag=True, help='Script version')
 @click.option('--backup', '-b', is_flag=True, help='Create a backup folder from the baseflow directory')
 @click.option('--completed', '-cmp', is_flag=True, help='Create a backup folder from the baseflow directory')
-def main(create,rename, location, version, backup, completed):
+@click.option('--hashed', '-rh', is_flag=True, multiple=True, help='Rename files with a their hashed values')
+def main(create,rename, location, version, backup, completed, hashed):
     """Console script for picturebot."""
     
     pathToConfig = helper.FullFilePath("config.json")
@@ -302,6 +352,8 @@ def main(create,rename, location, version, backup, completed):
         Backup(config)
     elif completed:
         Completed(config)
+    elif hashed:
+        Hash()
     else:
         click.echo('No arguments were passed, please enter --help for more information')
 
