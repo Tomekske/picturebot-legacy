@@ -8,7 +8,7 @@ import generalutils.guard as grd
 class Config:
     '''POCO class for config data'''
 
-    Workplace: str = ""
+    Workspace: str = ""
     Workflow: str = ""
     Baseflow: str = ""
     Backup: str = ""

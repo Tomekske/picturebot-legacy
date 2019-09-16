@@ -64,3 +64,9 @@ History
 
 * Renames filenames with their hashed values
 * Updated output of the renaming command
+
+0.0.10 (2019-09-16)
+------------------
+
+* Improvement: Use guard method to check whether the cwd is within the correct directory
+* Open the edited folder from within the selection folder

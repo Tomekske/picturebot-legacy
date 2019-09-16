@@ -39,26 +39,24 @@ def Create(config):
     grd.Filesystem.PathExist(cwd)
 
     #Check whether the workplace folder exists    
-    grd.Filesystem.PathExist(config.Workplace)
+    grd.Filesystem.PathExist(config.Workspace)
 
     counter = 0
 
     # Only create the flow when the script is executed from the workspace directory
-    if cwd == config.Workplace:
-        #Loop-over the workflows
-        for flow in config.Workflow:
-            pathToFlow = helper.FullFilePath(config.Workplace, flow)
+    grd.Filesystem.PathCwdExists(config.Workspace, cwd, True)
+    #Loop-over the workflows
+    for flow in config.Workflow:
+        pathToFlow = helper.FullFilePath(config.Workspace, flow)
 
-            # Only create non existing flows
-            if not grd.Filesystem.IsPath(pathToFlow):
-                helper.CreateFolder(pathToFlow)
-                grd.Filesystem.PathExist(pathToFlow)
-                click.echo(f'Flow created: {pathToFlow}')
-                counter += 1 
-        
-        click.echo(f"Flows created: {counter}")
-    else:
-        click.echo(f'Script command should be called from the workspace directory: {config.Workplace}')
+        # Only create non existing flows
+        if not grd.Filesystem.IsPath(pathToFlow):
+            helper.CreateFolder(pathToFlow)
+            grd.Filesystem.PathExist(pathToFlow)
+            click.echo(f'Flow created: {pathToFlow}')
+            counter += 1 
+    
+    click.echo(f"Flows created: {counter}")
 
 def Rename(config):
     '''Method to rename files within the baseflow directory
@@ -77,28 +75,27 @@ def Rename(config):
     basename = os.path.basename(cwd)
     
     # Obtain the path to the base flow project
-    pathToBaseflowProject = helper.FullFilePath(config.Workplace, config.Baseflow, basename)
+    pathToBaseflowProject = helper.FullFilePath(config.Workspace, config.Baseflow, basename)
     # Check whether the the path to the base flow project exists
     grd.Filesystem.PathExist(pathToBaseflowProject)
 
     # Only rename filenames within a baseflow project directory
-    if cwd == pathToBaseflowProject:
-        # Loop-ver the workflows and add an project directory to each flow
-        for flow in config.Workflow:
-            # Obtain the path to the project flow
-            pathToFlowProject = helper.FullFilePath(config.Workplace,flow,basename)
+    grd.Filesystem.PathCwdExists(pathToBaseflowProject, cwd, True)
 
-            # Check if folder exists and whether the directory isn't the backup flow
-            if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow != config.Backup):
-                helper.CreateFolder(pathToFlowProject)
+    # Loop-ver the workflows and add an project directory to each flow
+    for flow in config.Workflow:
+        # Obtain the path to the project flow
+        pathToFlowProject = helper.FullFilePath(config.Workspace,flow,basename)
 
-                grd.Filesystem.PathExist(pathToFlowProject)
+        # Check if folder exists and whether the directory isn't the backup flow
+        if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow != config.Backup):
+            helper.CreateFolder(pathToFlowProject)
 
-                click.echo(f'Project created: {pathToFlowProject}')
+            grd.Filesystem.PathExist(pathToFlowProject)
 
-        print('\r\n')
-    else:
-        click.echo(f'Script command should be called from the baseflow directory: {pathToBaseflowProject}')
+            click.echo(f'Project created: {pathToFlowProject}')
+
+    print('\r\n')
 
     flow = ''
     counter = 0
@@ -166,30 +163,29 @@ def Backup(config):
     basename = os.path.basename(cwd)
     
     # Obtain the path to the base flow project
-    pathToBaseflowProject = helper.FullFilePath(config.Workplace, config.Baseflow, basename)
+    pathToBaseflowProject = helper.FullFilePath(config.Workspace, config.Baseflow, basename)
 
     # Check whether the the path to the base flow project exists
     grd.Filesystem.PathExist(pathToBaseflowProject)
 
     # Check whether you're within the backup flow directory
-    if cwd == pathToBaseflowProject:
-        # Loop-ver the workflows
-        for flow in config.Workflow:
-            # Obtain the path to the project flow
-            pathToFlowProject = helper.FullFilePath(config.Workplace, flow, basename)
+    grd.Filesystem.PathCwdExists(pathToBaseflowProject, cwd, True)
 
-            # Check if folder exists and whether the flow is the backup flow
-            if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow == config.Backup):
-                helper.CreateFolder(pathToFlowProject)
+    # Loop-ver the workflows
+    for flow in config.Workflow:
+        # Obtain the path to the project flow
+        pathToFlowProject = helper.FullFilePath(config.Workspace, flow, basename)
 
-                # Check whether the project is successfully created within the backup directory
-                grd.Filesystem.PathExist(pathToFlowProject)
+        # Check if folder exists and whether the flow is the backup flow
+        if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow == config.Backup):
+            helper.CreateFolder(pathToFlowProject)
 
-                click.echo(f'Backup project created: {pathToFlowProject}')
+            # Check whether the project is successfully created within the backup directory
+            grd.Filesystem.PathExist(pathToFlowProject)
 
-        print('\r\n')
-    else:
-        click.echo(f'Script command should be called from the baseflow directory: {pathToBaseflowProject}')
+            click.echo(f'Backup project created: {pathToFlowProject}')
+
+    print('\r\n')
 
     # Obtain the filenames within the baseflow directory
     pictures = os.listdir(cwd)
@@ -198,7 +194,7 @@ def Backup(config):
 
     for picture in pictures:
         # Obtain the path to the baseflow directory
-        pathToBaseflow = helper.FullFilePath(config.Workplace, config.Baseflow, basename)
+        pathToBaseflow = helper.FullFilePath(config.Workspace, config.Baseflow, basename)
         # Check whether the baseflow directory exists
         grd.Filesystem.PathExist(pathToBaseflow)
 
@@ -208,7 +204,7 @@ def Backup(config):
         grd.Filesystem.PathExist(pathToPictureSource)
         
         # Obtain the path to the backupflow directory
-        pathToBackupFlow = helper.FullFilePath(config.Workplace, config.Backup, basename)
+        pathToBackupFlow = helper.FullFilePath(config.Workspace, config.Backup, basename)
         # Check whether the backupflow directory exists
         grd.Filesystem.PathExist(pathToBackupFlow)
 
@@ -241,10 +237,10 @@ def Completed(config):
     grd.Filesystem.PathExist(cwd)
     
     # Check whether the script is executed from the workspace directory
-    grd.Filesystem.PathCwdExists(config.Workplace, cwd)
+    grd.Filesystem.PathCwdExists(config.Workspace, cwd)
 
-        # Obtain the path to the the edit root directory
-    pathToEditedRoot = helper.FullFilePath(config.Workplace, config.Edited)
+    # Obtain the path to the the edit root directory
+    pathToEditedRoot = helper.FullFilePath(config.Workspace, config.Edited)
 
     # Check whether the path to the edit root directory exists
     grd.Filesystem.PathExist(pathToEditedRoot)
@@ -260,7 +256,7 @@ def Completed(config):
         # Amount of pictures within the edit shoot directory
         shootAmountPicturesEdited = len(os.listdir(pathToEditedShoots))
 
-        pathToSelectedShoot = helper.FullFilePath(config.Workplace, config.Selection, shoot)
+        pathToSelectedShoot = helper.FullFilePath(config.Workspace, config.Selection, shoot)
         grd.Filesystem.PathExist( pathToSelectedShoot)
 
         # Amount of pictures within the selection shoot directory
@@ -272,6 +268,7 @@ def Completed(config):
 
 def Hash():
     '''Method which renames filenames with their hashed values'''
+
     # Get the current working directory of where the script is executed
     cwd = os.getcwd()
 
@@ -319,15 +316,50 @@ def Hash():
 
     click.echo(f"Renamed files: {counter}")
 
+def Edited(config):
+    '''Method to open the edited folder from within the selection folder
+
+    Args:
+        config (Config): Config data object
+    '''
+
+    # Get the current working directory of where the script is executed
+    cwd = os.getcwd()
+
+    # Check whether the current working directory exists
+    grd.Filesystem.PathExist(cwd)
+
+    # Obtain the name of the base directory of the current working directory
+    shoot = os.path.basename(cwd)
+  
+    # Obtain the path to the base flow project
+    pathToBaseflowProject = helper.FullFilePath(config.Workspace, config.Selection, shoot)
+
+    # Check whether the the path to the base flow project exists
+    grd.Filesystem.PathExist(pathToBaseflowProject)
+
+    # Check whether you're within the baseflow directory
+    grd.Filesystem.PathCwdExists(pathToBaseflowProject, cwd, True)
+
+    # Obtain the absolute path to the edit flow of a shoot
+    pathToShootInEditedFlow = helper.FullFilePath(config.Workspace, config.Edited, shoot)
+
+    # Check whether you're within the edit flow shoot directory
+    grd.Filesystem.PathExist(pathToShootInEditedFlow)
+
+    # Open the correct edited directory
+    os.system(f"explorer {pathToShootInEditedFlow}") 
+
 @click.command()
 @click.option('--create', '-c', is_flag=True, help='Create workspace directory')
 @click.option('--rename', '-r', is_flag=True, help='Rename the files in the main flow directory')
 @click.option('--location', '-l', is_flag=True, help='Config file location')
 @click.option('--version', '-v', is_flag=True, help='Script version')
 @click.option('--backup', '-b', is_flag=True, help='Create a backup folder from the baseflow directory')
-@click.option('--completed', '-cmp', is_flag=True, help='Create a backup folder from the baseflow directory')
+@click.option('--completed', '-cmp', is_flag=True, help='Check whether a certain shoot is fully edited')
 @click.option('--hashed', '-rh', is_flag=True, multiple=True, help='Rename files with a their hashed values')
-def main(create,rename, location, version, backup, completed, hashed):
+@click.option('--Edited', '-e', is_flag=True, help='Open the associated edited flow folder')
+def main(create,rename, location, version, backup, completed, hashed, edited):
     """Console script for picturebot."""
     
     pathToConfig = helper.FullFilePath("config.json")
@@ -338,7 +370,7 @@ def main(create,rename, location, version, backup, completed, hashed):
     with open(pathToConfig) as f:
          # Load data from file
         data = json.load(f)
-        config = helper.Config(data['workplace'], data['workflow'], data['baseflow'], data['backup'], data['selection'], data['edited'])
+        config = helper.Config(data['workspace'], data['workflow'], data['baseflow'], data['backup'], data['selection'], data['edited'])
 
     if create:
         Create(config)
@@ -354,6 +386,8 @@ def main(create,rename, location, version, backup, completed, hashed):
         Completed(config)
     elif hashed:
         Hash()
+    elif edited:
+        Edited(config)
     else:
         click.echo('No arguments were passed, please enter --help for more information')
 
