@@ -59,7 +59,13 @@ History
 
 * Checking whether a certain shoot is finished isn't limited to the workspace folder anymore
 
-0.0.9 (2019-08-28)
+0.0.9 (2019-09-15)
+------------------
+
+* Renames filenames with their hashed values
+* Updated output of the renaming command
+
+0.0.10 (2019-09-16)
 ------------------
 
 * Improvement: Use guard method to check whether the cwd is within the correct directory
