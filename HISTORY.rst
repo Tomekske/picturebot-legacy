@@ -70,3 +70,9 @@ History
 
 * Improvement: Use guard method to check whether the cwd is within the correct directory
 * Open the edited folder from within the selection folder
+
+0.0.11 (2019-09-18)
+-------------------
+
+* Hash files are sorted by creation date
+* Updated: Renamed files are sorted by creation date instead of modification date
