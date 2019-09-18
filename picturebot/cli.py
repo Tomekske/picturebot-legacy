@@ -108,7 +108,7 @@ def Rename(config):
     # Obtain the original picture name within a flow directory
     pictures = os.listdir(cwd)
     # sort by date
-    pictures.sort(key=os.path.getmtime)
+    pictures.sort(key=os.path.getctime)
 
     # Loop over every picture withing the flow directory
     for index, picture in enumerate(pictures, 1):
@@ -282,9 +282,12 @@ def Hash():
     # Obtain the original picture name within a flow directory
     pictures = os.listdir(cwd)
 
+    # sort by date
+    pictures.sort(key=os.path.getctime)
+
     # Append files with an extension to a new list
     for picture in pictures:
-        
+ 
         if '.' in picture:
             files.append(picture)
 
@@ -302,7 +305,7 @@ def Hash():
         md5Hash = helper.HashFileMd5(pathToPicture)
         
         # Get the new name for the picture
-        newName = f"file_{md5Hash}.{extension}"
+        newName = f"PB_{index}_{md5Hash}_{index}.{extension}"
 
         # Obtain the absolute path to the new picture name
         pathToNewPicture = os.path.join(cwd, newName)
