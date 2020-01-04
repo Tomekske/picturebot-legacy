@@ -1,70 +1,54 @@
 import os
 import sys
 import hashlib
-from dataclasses import dataclass
 import generalutils.guard as grd
+import picturebot.poco as poco
 
-@dataclass
-class Config:
-    '''POCO class for config data'''
+class Helper:
+    '''Static class containing helper methods'''
 
-    Workspace: str = ""
-    Workflow: str = ""
-    Baseflow: str = ""
-    Backup: str = ""
-    Selection: str = ""
-    Edited: str = ""
+    @staticmethod
+    def FullFilePath(*items):
+        '''Get the full path to a folder or directory
+        Args:
+            items (list): List of folders and subfolders
+        
+        Returns:
+            (string) Full file name
+        '''
 
-def FullFilePath(*items):
-    '''Get the full path to a folder or directory
-    Args:
-        items (list): List of folders and subfolders
-    
-    Returns:
-        (string) Full file name
-    '''
+        # Get the current working directory
+        path = os.path.dirname(os.path.abspath(__file__))
 
-    # Get the current working directory
-    path = os.path.dirname(os.path.abspath(__file__))
+        # Loop over every folder and subfolders
+        for item in items:
+            path = os.path.join(path, item)
 
-    # Loop over every folder and subfolders
-    for item in items:
-        path = os.path.join(path, item)
+        return path
 
-    return path
+    @staticmethod
+    def HashFileMd5(file):
+        '''Create a md5 hash from a file
 
-def CreateFolder(path):
-    '''Create And test whether the folder is successfully created
-    
-    Args:
-        path (string): Folder that is going to get created
-    '''
+        Args:
+            file (file): File where a hash is created from
+        Returns:
+            (string) Md5 hash
+        '''
+        bufSize = 32768 # Read file in 32kb chunks
+        md5 = hashlib.md5()
 
-    if not grd.Filesystem.IsPath(path):
-        # Create folder
-        os.mkdir(path)
+        with open(file, 'rb') as f:
+            while True:
+                data = f.read(bufSize)
 
-        # Check whether creation was successfull
-        grd.Filesystem.PathExist(path)
+                if not data:
+                    break
 
-def HashFileMd5(file):
-    '''Create a md5 hash from a file
+                md5.update(data)
+                
+            return md5.hexdigest()
 
-    Args:
-        file (file): File where a hash is created from
-    Returns:
-        (string) Md5 hash
-    '''
-    bufSize = 32768 # Read file in 32kb chunks
-    md5 = hashlib.md5()
-
-    with open(file, 'rb') as f:
-        while True:
-            data = f.read(bufSize)
-
-            if not data:
-                break
-
-            md5.update(data)
-            
-        return md5.hexdigest()
+    @staticmethod
+    def Context(context):
+        return poco.Context(context.obj['config'], context.obj['workspaceObj'])
