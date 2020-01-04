@@ -41,6 +41,30 @@ TODO
 * Multiple workspaces support
 * Upload pictures to google pictures
 
+Usage
+-----
+Create a workspace::
+ pb workspace -c
+Initialize workspace::
+ pb workspace -i
+Make a copy of a picture in the backup flow::
+ pb -b <filename>
+Make a copy of all pictures within the base flow and copy them to the backup flow::
+ pb -bs
+Rename a picture within the baseflow accordingly to it's shootname::
+ pb -r <filename> <index>
+Rename all pictures within the baseflow accordingly to it's shootname::
+ pb -mr
+Convert a raw picture within the baseflow to a jpg format and store it within the preview flow::
+ pb -c <filename>
+Open config file in an editor::
+ pb config -s
+Print config file location::
+ pb config -l
+Print picturebot script version::
+ pb config -v
+Create a new shoot::
+ pb config -v <name> <dd-MM-YYYY>
 
 Credits
 -------
