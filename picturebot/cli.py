@@ -53,10 +53,15 @@ def main(context):
         # print(context.obj['config'])
 
 @main.command()
-@click.option('--create', '-c', is_flag=True, help='Create a new workspace and initialize the workspace')
-@click.option('--init', '-i', is_flag=True, help='Initialize the pre-configured workspace')
+@click.option('--create', '-c', nargs=1, help='Create a new workspace')
 @click.pass_context
-def workspace(context, create, init):
+def workspace(context, create):
+    '''Create a new workspace
+    
+    Args:
+        context (object): Global context object
+        create (object): Create a new workspace
+    '''
 
     ctx = helper.Context(context)
     # Get the current working directory of where the script is executed
@@ -65,14 +70,8 @@ def workspace(context, create, init):
     #Check whether the current working directory exists
     grd.Filesystem.PathExist(cwd)
 
-    if init:
-        #Check whether the workplace folder exists    
-        grd.Filesystem.PathExist(ctx.Config.Workspace)
-
-        ctx.WorkspaceObj.Initialize(cwd)
-
-    elif create:
-        ctx.WorkspaceObj.Create()   
+    if create:
+        ctx.WorkspaceObj.Create(create[0])   
 
 @main.command()
 @click.option('--backup', '-b', nargs=2, type=str, help='Make a copy of a picture in the backup flow')
@@ -83,8 +82,9 @@ def workspace(context, create, init):
 @click.pass_context
 def base(context, backup, massbackup, rename, massrename, convert):
     '''Method to backup files from the baseflow project
+
     Args:
-        config (Config): Config data object
+        context (object): Global context object
         backup (object): Make a copy of a picture in the backup flow
         massbackup (object): Make a copy of all pictures within the base flow and copy them to the backup flow
         rename (object): Rename a picture within the baseflow accordingly to it's shootname
