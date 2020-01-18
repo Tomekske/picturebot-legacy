@@ -46,15 +46,21 @@ class Workspace:
             click.echo(f"Workspace {ctx.Config.Workspace} already exists")
 
     def Version(self):
+        '''Print script version'''
+
         click.echo(f'picturebot version: {pb.__version__}')
 
     def ShowConfig(self):
+        '''Open the config location within an editor'''
+
         ctx = helper.Context(self.context)
 
         grd.Filesystem.PathExist(ctx.WorkspaceObj.location)
         os.system(f"start {ctx.WorkspaceObj.location}")
 
     def PrintConfig(self):
+        '''Print the configuration path location'''
+        
         ctx = helper.Context(self.context)
 
         click.echo(ctx.WorkspaceObj.location)

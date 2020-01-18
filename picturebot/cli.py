@@ -37,11 +37,20 @@ def main(context):
 
          # Load data from file
         data = json.load(f)
-        
+        lstConfig = []
+        for d in data:
+            lstConfig.append(poco.Config(d['workspace'], d['workflow'], d['baseflow'], d['backup'], d['selection'], d['edited'], d['preview'], d['editing'], d['instagram']))
+        c = 1
+
         # Load the config data in the context variable
-        context.obj['config'] = poco.Config(data['workspace'], data['workflow'], data['baseflow'], data['backup'], data['selection'], data['edited'], data['preview'], data['editing'], data['instagram'])
+        #x = poco.Config(data['workspace'], data['workflow'], data['baseflow'], data['backup'], data['selection'], data['edited'], data['preview'], data['editing'], data['instagram'])
+        #context.obj['config'] = poco.Config(data[c]['workspace'], data[c]['workflow'], data[c]['baseflow'], data[c]['backup'], data[c]['selection'], data[c]['edited'], data[c]['preview'], data[c]['editing'], data[c]['instagram'])
+        context.obj['config'] = lstConfig
         # Load the workspace object into the context variable
         context.obj['workspaceObj'] = ws.Workspace(pathToConfig, context)
+
+        # print(data[1]['workspace'])
+        # print(context.obj['config'])
 
 @main.command()
 @click.option('--create', '-c', is_flag=True, help='Create a new workspace and initialize the workspace')
@@ -66,33 +75,40 @@ def workspace(context, create, init):
         ctx.WorkspaceObj.Create()   
 
 @main.command()
-@click.option('--backup', '-b', nargs=1, type=str, help='Make a copy of a picture in the backup flow')
-@click.option('--massbackup', '-mb', is_flag=True, help='Make a copy of all pictures within the base flow and copy them to the backup flow')
-@click.option('--rename', '-r', nargs=2, type=str, help='Rename a picture within the baseflow accordingly to it\'s shootname')
-@click.option('--massrename', '-mr', is_flag=True, help='Rename all pictures within the baseflow accordingly to it\'s shootname')
-@click.option('--convert', '-c', nargs=2, type=str, help='Convert a raw picture within the baseflow to a jpg format and store it within the preview flow')
+@click.option('--backup', '-b', nargs=2, type=str, help='Make a copy of a picture in the backup flow')
+@click.option('--massbackup', '-mb', nargs=1, type=str, help='Make a copy of all pictures within the base flow and copy them to the backup flow')
+@click.option('--rename', '-r', nargs=3, type=str, help='Rename a picture within the baseflow accordingly to it\'s shootname')
+@click.option('--massrename', '-mr', nargs=1, help='Rename all pictures within the baseflow accordingly to it\'s shootname')
+@click.option('--convert', '-c', nargs=3, type=str, help='Convert a raw picture within the base flow to a jpg format and store it within the preview flow')
 @click.pass_context
-def base(context, backup, massbackup,rename, massrename, convert):
+def base(context, backup, massbackup, rename, massrename, convert):
     '''Method to backup files from the baseflow project
     Args:
         config (Config): Config data object
+        backup (object): Make a copy of a picture in the backup flow
+        massbackup (object): Make a copy of all pictures within the base flow and copy them to the backup flow
+        rename (object): Rename a picture within the baseflow accordingly to it's shootname
+        massrename (object): Rename all pictures within the baseflow accordingly to it's shootname
+        convert (object): Convert a raw picture within the base flow to a jpg format and store it within the preview flow
     '''
 
     ctx = helper.Context(context)
 
-    bs = baseflow.Base(ctx)
-
     if backup:
-        bs.Backup(backup)
+        bs = baseflow.Base(ctx, backup[0])
+        bs.Backup(backup[1])
     elif massbackup:
+        bs = baseflow.Base(ctx, massbackup[0])
         bs.MassBackup()
     elif rename:
-        bs.Rename(rename[0], rename[1])
+        bs = baseflow.Base(ctx, rename[0])
+        bs.Rename(rename[1], rename[2])
     elif massrename:
+        bs = baseflow.Base(ctx, massrename[0])
         bs.MassRename()
     elif convert:
-        #pb base -c "C://fsdfds" 10%
-        bs.Convert(convert[0], convert[1])
+        bs = baseflow.Base(ctx, convert[0])
+        bs.Convert(convert[1], convert[2])
 
 @main.command()
 @click.option('--show', '-s', is_flag=True, help='Open config file in an editor')
@@ -107,6 +123,7 @@ def config(context, show, location, version):
         view (object): Option that opens the configuration file
         location (object): Option that prints the configuration file location within the filesystem
     '''
+
     ctx = helper.Context(context)
 
     if show:
@@ -130,15 +147,23 @@ def flow(context, completed, edited):
         fw.Edited()
 
 @main.command()
-@click.option('--new', '-n', nargs=2, type=str, help='Create a new shoot')
+@click.option('--new', '-n', nargs=3, type=str, help='Create a new shoot')
 @click.pass_context
 def shoot(context, new):
+    '''Shoot option allows modification of a shoot within the workspace
+
+    Args:
+        context (object): Global context object
+        new (object): Option to create a new shoot (<name> <date>) 
+    '''
+
     ctx = helper.Context(context)
 
     if new:
-        newShoot = f'{new[0]} {new[1]}'
-        s = sht.Shoot(ctx, newShoot)
-        print(f'main: {newShoot}')
+        newShoot = f'{new[1]} {new[2]}'
+        # Create a shoot object
+        s = sht.Shoot(ctx, new[0], newShoot)
+        # Creates the shoot
         s.Create()
 
 if __name__ == "__main__":

@@ -76,3 +76,17 @@ History
 
 * Hash files are sorted by creation date
 * Updated: Renamed files are sorted by creation date instead of modification date
+
+0.0.12 (2020-01-04)
+-------------------
+* Class hierarchy improvements
+* Added: mass rename function
+* Added: rename a single file function
+* Added: mass backup function
+* Added: backup a single function
+* Added: Convert RAW picture to a jpg
+
+
+0.0.12 (2020-01-18)
+-------------------
+* Added: Multi-workspace support

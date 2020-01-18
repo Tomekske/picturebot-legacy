@@ -13,42 +13,96 @@ from picturebot.directory import Directory as directory
 import re
 
 class Base():
-    def __init__(self, ctx):
+    def __init__(self, ctx, index):
+        '''Base class constructor
+        
+        Args:
+            ctx (object): Global context object
+            index (int): Index of the selected workspace configuration
+        '''
+
         self.ctx = ctx
+        self.index = int(index)
         self.basename = ""
         self.cwd = ""
         self.shoot = ""
     
     def Backup(self, path):
+        '''Backup a single picture in the backup flow
+        
+        Args:
+            path (string): Path to the picture
+        '''
+
+        # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
+        # Copy a single file in the backup flow
         self._CopyFile(path)
 
     def MassBackup(self):
+        '''Backup all the pictures within the base flow in the backup flow'''
+
+        # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
+        # Copy all pictures within the base flow in the backup flow
         self.__CopyFilesFromBaseToBackup()
 
     def Rename(self, index, path):
+        '''Rename a file accordingly to the shootname (<name>_<data>_<index>)
+        
+        Args:
+            index (string): Picture index number
+            path (string): Path to the picture
+        '''
+
+        # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         shoot = self.NewShootName()
         self._r(path,shoot, index)
 
     def MassRename(self):
+        '''Rename all the files within a flow'''
+
+        # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         self.__Rename()
     
     def Convert(self, path, quality):
+        '''Convert a raw picture to a jpg format and store it within the preview flow
+        
+        Args:
+            path (string): Path of the picture
+            quality (string): Quality of the converted picture
+        '''
+
+        # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         self.__ConvertImage(path, quality)
 
     def __ConvertImage(self, path, quality):
-        basename = os.path.basename(path)
-        basenameWithoutExtension = basename.split('.')[0]
-        output = os.path.join(self.ctx.Config.Workspace, self.shoot, self.ctx.Config.Preview, f"{basenameWithoutExtension}.jpg")
+        '''Convert a raw picture to a jpg format and store it within the preview flow
         
+        Args:
+            path (string): Path of the picture
+            quality (string): Quality of the converted picture
+        '''
+
+        # Obtain the basename of the path
+        basename = os.path.basename(path)
+        # Obtain the basename without an extension
+        basenameWithoutExtension = basename.split('.')[0]
+        # Create the output storage path
+        output = os.path.join(self.ctx.Config[self.index].Workspace, self.shoot, self.ctx.Config[self.index].Preview, f"{basenameWithoutExtension}.jpg")
+        
+        # magick convert "<path>" -quality <quality>% -verbose "<outputPath>"
         command = f"magick convert \"{path}\" -quality {quality}% -verbose \"{output}\""
+
+        # Execute command
         os.system(command)
 
     def __PathToBaseFlow(self):
+        '''Check whether the script is runned within the baseflow directory'''
+
         # Get the current working directory of where the script is executed
         self.cwd = os.getcwd()
         self.shoot = re.search('(\w+\s+\d+-\d+-\d+)', self.cwd).group(0)
@@ -56,68 +110,49 @@ class Base():
         # Check whether the current working directory exists
         grd.Filesystem.PathExist(self.cwd)
 
-        # Obtain the name of the base directory of the current working directory
+        # Obtain the name of the base flow of the current shoot
         self.basename = os.path.basename(self.cwd)
-        print(self.basename)
+
         # Obtain the path to the base flow project
         if grd.Filesystem.IsPathCwd(self.basename, self.cwd):
-            pathToBaseflowProject = helper.FullFilePath(self.ctx.Config.Workspace,self.shoot, self.basename)
+            pathToBaseflowProject = helper.FullFilePath(self.ctx.Config[self.index].Workspace, self.shoot, self.basename)
+            
             # Check whether the the path to the base flow project exists
             grd.Filesystem.PathExist(pathToBaseflowProject)
-
             # Check whether you're within the backup flow directory
             grd.Filesystem.PathCwdExists(pathToBaseflowProject, self.cwd, True)
-
-    def __CreateBackupFolder(self):
-        # Loop-over all workflows
-        for flow in self.ctx.Config.Workflow:
-            # Obtain the path to the project flow
-            pathToFlowProject = helper.FullFilePath(self.ctx.Config.Workspace, flow, self.basename)
-
-            # Check if folder exists and whether the flow is the backup flow
-            if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow == self.ctx.Config.Backup):
-                directory.CreateFolder(pathToFlowProject)
-
-                click.echo(f'Backup project created: {pathToFlowProject}\r\n')
-    
-    def __CreateFlows(self, backup):
-        # Loop-ver the workflows and add an project directory to each flow
-        for flow in self.ctx.Config.Workflow:
-            # Obtain the path to the project flow
-            pathToFlowProject = helper.FullFilePath(self.ctx.Config.Workspace, flow, self.basename)
-
-            if backup:
-                # Check if folder exists and whether the flow is the backup flow
-                if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow == self.ctx.Config.Backup):
-                    directory.CreateFolder(pathToFlowProject)
-
-                    click.echo(f'Backup project created: {pathToFlowProject}\r\n')
-            else:
-                # Check if folder exists and whether the directory isn't the backup flow
-                if (not grd.Filesystem.IsPath(pathToFlowProject)) and (flow != self.ctx.Config.Backup):
-                    directory.CreateFolder(pathToFlowProject)
-
-                    click.echo(f'Project created: {pathToFlowProject}')
-        click.echo('\r\n')
-    
+        
     def __CopyFilesFromBaseToBackup(self):
+        '''Copy all files from the base flow to the backup flow'''
+
         pictures = os.listdir(self.cwd)
 
         counter = 0
 
         for picture in pictures:
             pathToBackupFlow = self._CopyFile(picture)
+
             click.echo(f'Copying: {picture} -> {pathToBackupFlow} [{counter + 1}/{len(pictures)}]')
+
             counter += 1
 
         click.echo(f"Copied files: {counter}")
 
     def _CopyFile(self, path):
+        '''Copy a file to the backup flow
+        
+        Args:
+            path (string): Path to the picture
+        
+        Returns:
+            (string): Backup flow path
+        '''
+
         # Obtain the filename from a specified path
-        filename = base=os.path.basename(path)
+        filename = os.path.basename(path)
 
         # Obtain the path to the baseflow directory
-        pathToBaseflow = helper.FullFilePath(self.ctx.Config.Workspace, self.shoot, self.basename)
+        pathToBaseflow = helper.FullFilePath(self.ctx.Config[self.index].Workspace, self.shoot, self.basename)
         # Check whether the baseflow directory exists
         grd.Filesystem.PathExist(pathToBaseflow)
 
@@ -126,9 +161,8 @@ class Base():
         # Check whether the source picture path exists
         grd.Filesystem.PathExist(pathToPictureSource)
 
-        # # Obtain the path to the backupflow directory
-        pathToBackupFlow = helper.FullFilePath(self.ctx.Config.Workspace, self.shoot, self.ctx.Config.Backup)
-
+        # Obtain the path to the backupflow directory
+        pathToBackupFlow = helper.FullFilePath(self.ctx.Config[self.index].Workspace, self.shoot, self.ctx.Config[self.index].Backup)
         # Check whether the backupflow directory exists
         grd.Filesystem.PathExist(pathToBackupFlow)
 
@@ -144,6 +178,8 @@ class Base():
         return pathToBackupFlow
 
     def __Rename(self):
+        '''Rename the picture'''
+
         counter = 0
 
         shoot = self.NewShootName()
@@ -157,10 +193,16 @@ class Base():
 
         # Loop over every picture withing the flow directory
         for index, picture in enumerate(pictures, 1):
-            self._r(picture, shoot, index)
+            self.__RenamePicture(picture, shoot, index)
         click.echo(f"Renamed files: {count}")
 
     def NewShootName(self):
+        '''Create the shootname
+        
+        Returns:
+            (string): Returns the formated shootname
+        '''
+
         newShoot = ''
 
         # Loop over every word of the flow name directory
@@ -169,7 +211,15 @@ class Base():
             newShoot += f'{i}_'
         return newShoot
 
-    def _r(self, path, shoot, index):
+    def _RenamePicture(self, path, shoot, index):
+        '''Rename a picture
+        
+        Args:
+            path (string): Path to the picture
+            shoot (string): Shootname of the picture
+            index (string): Picture index number
+        '''
+
         # Get the extension of the original picture
         extension = path.split('.')[1]
 
@@ -192,5 +242,3 @@ class Base():
 
             # Check whether the new picture file exists after renaming
             grd.Filesystem.PathExist(pathToNewPicture)
-
-            #output = f'Renaming: {picture} -> {newName} [{counter + 1}/{len(pictures)}]'
