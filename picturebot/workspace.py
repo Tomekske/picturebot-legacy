@@ -18,29 +18,15 @@ class Workspace:
         self.location = location
         self.context = context
 
-    def Initialize(self, cwd):
-        '''Initialize an existing workspace with flows
-        
-        Args:
-            cwd (string): Execution path of the program
-        '''
-
-        ctx = helper.Context(self.context)
-
-        # Only create the flow when the script is executed from the workspace directory
-        grd.Filesystem.PathCwdExists(ctx.Config.Workspace, cwd, True)
-
-        self.__CreateFlow(ctx)
-
-    def Create(self):
+    def Create(self, index):
         '''Create a new workspace an initialize it with flows'''
+        
+        index = int(index)
 
         ctx = helper.Context(self.context)
 
-        if not grd.Filesystem.IsPath(ctx.Config.Workspace):
-            directory.CreateFolder(ctx.Config.Workspace)
-            
-            self.__CreateFlow(ctx)
+        if not grd.Filesystem.IsPath(ctx.Config[index].Workspace):
+            directory.CreateFolder(ctx.Config[index].Workspace)
         
         else:
             click.echo(f"Workspace {ctx.Config.Workspace} already exists")
@@ -64,24 +50,3 @@ class Workspace:
         ctx = helper.Context(self.context)
 
         click.echo(ctx.WorkspaceObj.location)
-
-    def __CreateFlow(self, context):
-        ''' Create a new flows
-
-        Args:
-            context (object): Global context object
-        '''
-
-        counter = 0
-
-        #Loop-over the workflows
-        for flow in context.Config.Workflow:
-            pathToFlow = helper.FullFilePath(context.Config.Workspace, flow)
-
-            # Only create non existing flows
-            if not grd.Filesystem.IsPath(pathToFlow):
-                directory.CreateFolder(pathToFlow)
-                click.echo(f'Flow created: {pathToFlow}')
-                counter += 1 
-        
-        click.echo(f"Flows created: {counter}")

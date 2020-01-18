@@ -87,6 +87,10 @@ History
 * Added: Convert RAW picture to a jpg
 
 
-0.0.12 (2020-01-18)
+0.0.13 (2020-01-18)
 -------------------
 * Added: Multi-workspace support
+
+0.0.14 (2020-01-18)
+-------------------
+* Bug fix: Create new workspace
