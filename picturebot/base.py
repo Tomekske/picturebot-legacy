@@ -58,7 +58,7 @@ class Base():
         # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         shoot = self.NewShootName()
-        self._r(path,shoot, index)
+        self.__RenamePicture(path, shoot, index)
 
     def MassRename(self):
         '''Rename all the files within a flow'''
@@ -96,7 +96,6 @@ class Base():
         
         # magick convert "<path>" -quality <quality>% -verbose "<outputPath>"
         command = f"magick convert \"{path}\" -quality {quality}% -verbose \"{output}\""
-
         # Execute command
         os.system(command)
 
@@ -211,7 +210,7 @@ class Base():
             newShoot += f'{i}_'
         return newShoot
 
-    def _RenamePicture(self, path, shoot, index):
+    def __RenamePicture(self, path, shoot, index):
         '''Rename a picture
         
         Args:
