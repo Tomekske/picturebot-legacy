@@ -94,3 +94,7 @@ History
 0.0.14 (2020-01-18)
 -------------------
 * Bug fix: Create new workspace
+
+0.0.15 (2020-01-19)
+-------------------
+* Bug fix: Create flows issue
