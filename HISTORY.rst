@@ -79,6 +79,7 @@ History
 
 0.0.12 (2020-01-04)
 -------------------
+
 * Class hierarchy improvements
 * Added: mass rename function
 * Added: rename a single file function
@@ -86,15 +87,23 @@ History
 * Added: backup a single function
 * Added: Convert RAW picture to a jpg
 
-
 0.0.13 (2020-01-18)
 -------------------
+
 * Added: Multi-workspace support
 
 0.0.14 (2020-01-18)
 -------------------
+
 * Bug fix: Create new workspace
 
 0.0.15 (2020-01-19)
 -------------------
+
 * Bug fix: Create flows issue
+
+0.0.16 (2020-01-19)
+-------------------
+
+* Bug fix: rename image 
+* Bug fix: convert image
