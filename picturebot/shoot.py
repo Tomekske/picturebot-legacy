@@ -55,7 +55,7 @@ class Shoot:
         counter = 0
 
         #Loop-over the workflows
-        for flow in self.ctx.Config[self.Index].Workflow:
+        for flow in self.ctx.Config[self.index].Workflow:
             pathToFlow = helper.FullFilePath(root, flow)
 
             # Only create non existing flows
