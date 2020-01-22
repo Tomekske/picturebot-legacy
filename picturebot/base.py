@@ -65,13 +65,16 @@ class Base():
         self.__PathToBaseFlow()
         self.__Rename()
 
-    def HashRename(self, path, index):
-        '''Method which renames filenames with their hashed values'''
+    def HashRename(self, index, path):
+        '''Method which renames filenames with their hashed values
+        
+        Args:
+            index (string): Picture index number
+            path (string): Path to the picture
+        '''
 
         self.__PathToBaseFlow()
-        self.__Hash(path, index)
-
-
+        self.__Hashed(path, index)
     
     def Convert(self, path, quality):
         '''Convert a raw picture to a jpg format and store it within the preview flow
@@ -246,7 +249,7 @@ class Base():
             # Check whether the new picture file exists after renaming
             grd.Filesystem.PathExist(pathToNewPicture)
 
-    def __Hash(self, path, index):
+    def __Hashed(self, path, index):
         extension = path.split('.')[1]
 
         # Get absolute path to the picture
@@ -257,20 +260,20 @@ class Base():
 
         md5Hash = helper.HashFileMd5(path)
 
-        # Get the new name for the picture
-        newName = f"{md5Hash}=={shoot}{str(index).zfill(5)}.{extension}"
-        print(newName)
-
-        # Obtain the absolute path to the new picture name
-        # pathToNewPicture = os.path.join(self.cwd, newName)
+        # Get the new name for the picture, obtain the first 10 hashvalues
+        hashedName = f"pb_{md5Hash[:10]}_{str(index).zfill(5)}.{extension}"
         
         # # Only rename the changed files
-        # if not pathToNewPicture == pathToPicture:
-        #     # Rename the picture file
-        #     os.rename(pathToPicture, pathToNewPicture)
+        # Obtain the absolute path to the new picture name
+        pathToNewPicture = os.path.join(self.cwd, hashedName)
+        
+        # Only rename the changed files
+        if not pathToNewPicture == pathToPicture:
+            # Rename the picture file
+            os.rename(pathToPicture, pathToNewPicture)
 
-        #     # Check whether the new picture file exists after renaming
-        #     grd.Filesystem.PathExist(pathToNewPicture)
+            # Check whether the new picture file exists after renaming
+            grd.Filesystem.PathExist(pathToNewPicture)
 
 
 

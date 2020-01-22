@@ -35,6 +35,7 @@ class Helper:
         Returns:
             (string) Md5 hash
         '''
+        
         bufSize = 32768 # Read file in 32kb chunks
         md5 = hashlib.md5()
 
