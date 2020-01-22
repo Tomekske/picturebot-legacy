@@ -77,10 +77,11 @@ def workspace(context, create):
 @click.option('--backup', '-b', nargs=2, type=str, help='Make a copy of a picture in the backup flow')
 @click.option('--massbackup', '-mb', nargs=1, type=str, help='Make a copy of all pictures within the base flow and copy them to the backup flow')
 @click.option('--rename', '-r', nargs=3, type=str, help='Rename a picture within the baseflow accordingly to it\'s shootname')
+@click.option('--hash', '-h', nargs=2, type=str, help='Hash rename a picture')
 @click.option('--massrename', '-mr', nargs=1, help='Rename all pictures within the baseflow accordingly to it\'s shootname')
 @click.option('--convert', '-c', nargs=3, type=str, help='Convert a raw picture within the base flow to a jpg format and store it within the preview flow')
 @click.pass_context
-def base(context, backup, massbackup, rename, massrename, convert):
+def base(context, backup, massbackup, hash, rename, massrename, convert):
     '''Method to backup files from the baseflow project
 
     Args:
@@ -100,6 +101,9 @@ def base(context, backup, massbackup, rename, massrename, convert):
     elif massbackup:
         bs = baseflow.Base(ctx, massbackup[0])
         bs.MassBackup()
+    elif hash:
+        bs = baseflow.Base(ctx, hash[0])
+        bs.Hash(hash[1])
     elif rename:
         bs = baseflow.Base(ctx, rename[0])
         bs.Rename(rename[1], rename[2])

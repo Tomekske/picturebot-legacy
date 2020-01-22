@@ -56,7 +56,7 @@ class Base():
         # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         shoot = self.NewShootName()
-        self.__RenamePicture(path,shoot, index)
+        self.__RenamePicture(path, shoot, index)
 
     def MassRename(self):
         '''Rename all the files within a flow'''
@@ -64,6 +64,14 @@ class Base():
         # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         self.__Rename()
+
+    def HashRename(self, path, index):
+        '''Method which renames filenames with their hashed values'''
+
+        self.__PathToBaseFlow()
+        self.__Hash(path, index)
+
+
     
     def Convert(self, path, quality):
         '''Convert a raw picture to a jpg format and store it within the preview flow
@@ -237,3 +245,71 @@ class Base():
 
             # Check whether the new picture file exists after renaming
             grd.Filesystem.PathExist(pathToNewPicture)
+
+    def __Hash(self, path, index):
+        extension = path.split('.')[1]
+
+        # Get absolute path to the picture
+        pathToPicture = os.path.join(self.cwd, path)
+
+        # Check whether the absolute path to the picture is existing
+        grd.Filesystem.PathExist(path)
+
+        md5Hash = helper.HashFileMd5(path)
+
+        # Get the new name for the picture
+        newName = f"{md5Hash}=={shoot}{str(index).zfill(5)}.{extension}"
+        print(newName)
+
+        # Obtain the absolute path to the new picture name
+        # pathToNewPicture = os.path.join(self.cwd, newName)
+        
+        # # Only rename the changed files
+        # if not pathToNewPicture == pathToPicture:
+        #     # Rename the picture file
+        #     os.rename(pathToPicture, pathToNewPicture)
+
+        #     # Check whether the new picture file exists after renaming
+        #     grd.Filesystem.PathExist(pathToNewPicture)
+
+
+
+        # # Obtain the original picture name within a flow directory
+        # pictures = os.listdir(cwd)
+
+        # # sort by date
+        # pictures.sort(key=os.path.getctime)
+
+        # # Append files with an extension to a new list
+        # for picture in pictures:
+    
+        #     if '.' in picture:
+        #         files.append(picture)
+
+        # # Loop over every picture withing the flow directory
+        # for index, picture in enumerate(files, 1):
+        #     # Get the extension of the original picture
+        #     extension = picture.split('.')[1]
+
+        #     # Get absolute path to the picture
+        #     pathToPicture = os.path.join(cwd,picture)
+
+        #     # Check whether the absolute path to the picture is existing
+        #     grd.Filesystem.PathExist(pathToPicture)
+
+        #     md5Hash = helper.HashFileMd5(pathToPicture)
+            
+        #     # Get the new name for the picture
+        #     newName = f"PB_{index}_{md5Hash}_{index}.{extension}"
+
+        #     # Obtain the absolute path to the new picture name
+        #     pathToNewPicture = os.path.join(cwd, newName)
+
+        #     # Rename the files
+        #     os.rename(pathToPicture, pathToNewPicture)
+
+        #     click.echo(f'Renaming: {picture} -> {newName} [{counter + 1}/{len(files)}]')
+
+        #     counter += 1
+
+        # click.echo(f"Renamed files: {counter}")
