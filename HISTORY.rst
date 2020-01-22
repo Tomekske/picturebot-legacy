@@ -98,3 +98,8 @@ History
 0.0.15 (2020-01-19)
 -------------------
 * Bug fix: Create flows issue
+
+0.0.16 (2020-01-22)
+-------------------
+* Bug fix: Multiple spaces in a shoot names
+* Bug fix: private methods

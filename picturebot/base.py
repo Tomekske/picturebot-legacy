@@ -23,7 +23,6 @@ class Base():
 
         self.ctx = ctx
         self.index = int(index)
-        self.basename = ""
         self.cwd = ""
         self.shoot = ""
     
@@ -37,11 +36,10 @@ class Base():
         # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         # Copy a single file in the backup flow
-        self._CopyFile(path)
+        self.__CopyFile(path)
 
     def MassBackup(self):
         '''Backup all the pictures within the base flow in the backup flow'''
-
         # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         # Copy all pictures within the base flow in the backup flow
@@ -58,7 +56,7 @@ class Base():
         # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
         shoot = self.NewShootName()
-        self._r(path,shoot, index)
+        self.__RenamePicture(path,shoot, index)
 
     def MassRename(self):
         '''Rename all the files within a flow'''
@@ -105,18 +103,15 @@ class Base():
 
         # Get the current working directory of where the script is executed
         self.cwd = os.getcwd()
-        self.shoot = re.search('(\w+\s+\d+-\d+-\d+)', self.cwd).group(0)
+
+        self.shoot = re.search('(\w+( +\w+)*\s+\d+-\d+-\d+)', self.cwd).group(0)
 
         # Check whether the current working directory exists
         grd.Filesystem.PathExist(self.cwd)
 
-        # Obtain the name of the base flow of the current shoot
-        self.basename = os.path.basename(self.cwd)
-
         # Obtain the path to the base flow project
-        if grd.Filesystem.IsPathCwd(self.basename, self.cwd):
-            pathToBaseflowProject = helper.FullFilePath(self.ctx.Config[self.index].Workspace, self.shoot, self.basename)
-            
+        if grd.Filesystem.IsPathCwd(self.ctx.Config[self.index].Baseflow, self.cwd):
+            pathToBaseflowProject = helper.FullFilePath(self.ctx.Config[self.index].Workspace, self.shoot, self.ctx.Config[self.index].Baseflow)
             # Check whether the the path to the base flow project exists
             grd.Filesystem.PathExist(pathToBaseflowProject)
             # Check whether you're within the backup flow directory
@@ -130,7 +125,7 @@ class Base():
         counter = 0
 
         for picture in pictures:
-            pathToBackupFlow = self._CopyFile(picture)
+            pathToBackupFlow = self.__CopyFile(picture)
 
             click.echo(f'Copying: {picture} -> {pathToBackupFlow} [{counter + 1}/{len(pictures)}]')
 
@@ -138,7 +133,7 @@ class Base():
 
         click.echo(f"Copied files: {counter}")
 
-    def _CopyFile(self, path):
+    def __CopyFile(self, path):
         '''Copy a file to the backup flow
         
         Args:
@@ -152,7 +147,7 @@ class Base():
         filename = os.path.basename(path)
 
         # Obtain the path to the baseflow directory
-        pathToBaseflow = helper.FullFilePath(self.ctx.Config[self.index].Workspace, self.shoot, self.basename)
+        pathToBaseflow = helper.FullFilePath(self.ctx.Config[self.index].Workspace, self.shoot, self.ctx.Config[self.index].Baseflow)
         # Check whether the baseflow directory exists
         grd.Filesystem.PathExist(pathToBaseflow)
 
@@ -211,7 +206,7 @@ class Base():
             newShoot += f'{i}_'
         return newShoot
 
-    def _RenamePicture(self, path, shoot, index):
+    def __RenamePicture(self, path, shoot, index):
         '''Rename a picture
         
         Args:

@@ -42,6 +42,6 @@ setup(
     test_suite='tests',
     tests_require=requirements,
     url='https://github.com/Tomekske/picturebot',
-    version='0.0.15',
+    version='0.0.16',
     zip_safe=False,
 )
