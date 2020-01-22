@@ -250,6 +250,13 @@ class Base():
             grd.Filesystem.PathExist(pathToNewPicture)
 
     def __Hashed(self, path, index):
+        '''Method which renames filenames with their hashed values
+        
+        Args:
+            index (string): Picture index number
+            path (string): Path to the picture
+        '''
+        
         extension = path.split('.')[1]
 
         # Get absolute path to the picture
@@ -263,7 +270,6 @@ class Base():
         # Get the new name for the picture, obtain the first 10 hashvalues
         hashedName = f"pb_{md5Hash[:10]}_{str(index).zfill(5)}.{extension}"
         
-        # # Only rename the changed files
         # Obtain the absolute path to the new picture name
         pathToNewPicture = os.path.join(self.cwd, hashedName)
         
@@ -274,45 +280,3 @@ class Base():
 
             # Check whether the new picture file exists after renaming
             grd.Filesystem.PathExist(pathToNewPicture)
-
-
-
-        # # Obtain the original picture name within a flow directory
-        # pictures = os.listdir(cwd)
-
-        # # sort by date
-        # pictures.sort(key=os.path.getctime)
-
-        # # Append files with an extension to a new list
-        # for picture in pictures:
-    
-        #     if '.' in picture:
-        #         files.append(picture)
-
-        # # Loop over every picture withing the flow directory
-        # for index, picture in enumerate(files, 1):
-        #     # Get the extension of the original picture
-        #     extension = picture.split('.')[1]
-
-        #     # Get absolute path to the picture
-        #     pathToPicture = os.path.join(cwd,picture)
-
-        #     # Check whether the absolute path to the picture is existing
-        #     grd.Filesystem.PathExist(pathToPicture)
-
-        #     md5Hash = helper.HashFileMd5(pathToPicture)
-            
-        #     # Get the new name for the picture
-        #     newName = f"PB_{index}_{md5Hash}_{index}.{extension}"
-
-        #     # Obtain the absolute path to the new picture name
-        #     pathToNewPicture = os.path.join(cwd, newName)
-
-        #     # Rename the files
-        #     os.rename(pathToPicture, pathToNewPicture)
-
-        #     click.echo(f'Renaming: {picture} -> {newName} [{counter + 1}/{len(files)}]')
-
-        #     counter += 1
-
-        # click.echo(f"Renamed files: {counter}")
