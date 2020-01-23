@@ -53,3 +53,20 @@ class Helper:
     @staticmethod
     def Context(context):
         return poco.Context(context.obj['config'], context.obj['workspaceObj'])
+
+    @staticmethod
+    def GetSortedFiles(cwd):
+        '''Get all files within a directory sorted by creation date
+        
+        Args:
+            cwd (string): Path to the directory
+        
+        Returns:
+            (list): Returns a list containing all the files sorted by creation date
+        '''
+        
+        pictures = os.listdir(cwd)
+        # sort by date
+        pictures.sort(key=os.path.getctime)
+
+        return pictures

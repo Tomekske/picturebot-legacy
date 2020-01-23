@@ -103,3 +103,11 @@ History
 -------------------
 * Bug fix: Multiple spaces in a shoot names
 * Bug fix: private methods
+
+0.0.17 (2020-01-22)
+-------------------
+* Bug fix: Create flow
+
+0.0.18 (2020-01-23)
+-------------------
+* Added: Hash file names
