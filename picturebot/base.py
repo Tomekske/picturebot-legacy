@@ -25,6 +25,7 @@ class Base():
         self.index = int(index)
         self.cwd = ""
         self.shoot = ""
+        self.HashedDict = {}
     
     def Backup(self, path):
         '''Backup a single picture in the backup flow
@@ -54,6 +55,7 @@ class Base():
         '''
 
         # Check whether the script is runned from the base flow directory
+        print(f'path: {path}')
         self.__PathToBaseFlow()
         shoot = self.NewShootName()
         self.__RenamePicture(path, shoot, index)
@@ -63,18 +65,36 @@ class Base():
 
         # Check whether the script is runned from the base flow directory
         self.__PathToBaseFlow()
+        self.MassHashRename()
         self.__Rename()
 
-    def HashRename(self, index, path):
+    def HashRename(self):
+        '''Method which renames filenames with their hashed values'''
+
+        self.__PathToBaseFlow()
+        self.MassHashRename()
+
+    def MassHashRename(self):
         '''Method which renames filenames with their hashed values
         
         Args:
             index (string): Picture index number
             path (string): Path to the picture
         '''
+        
+        # Get the current working directory of where the script is executed
+        shoot = self.NewShootName()
 
-        self.__PathToBaseFlow()
-        self.__Hashed(path, index)
+        # Obtain the original picture name within a flow directory
+        pictures = helper.GetSortedFiles(self.cwd)
+
+        count = len(pictures)
+
+        # Loop over every picture withing the flow directory hash rename the files
+        for index, picture in enumerate(pictures, 1):
+            h = self.__RenameHash(picture, shoot, index)
+            absolutePath = os.path.join(os.path.dirname(os.path.abspath(picture)), picture)
+            self.HashedDict[absolutePath] = h
     
     def Convert(self, path, quality):
         '''Convert a raw picture to a jpg format and store it within the preview flow
@@ -191,11 +211,15 @@ class Base():
         shoot = self.NewShootName()
 
         # Obtain the original picture name within a flow directory
-        pictures = os.listdir(self.cwd)
-        # sort by date
-        pictures.sort(key=os.path.getctime)
+        pictures = helper.GetSortedFiles(self.cwd)
 
         count = len(pictures)
+
+        # Loop over every picture withing the flow directory hash rename the files
+        for index, picture in enumerate(pictures, 1):
+            self.__RenameHash(picture, shoot, index)
+
+        pictures = helper.GetSortedFiles(self.cwd)
 
         # Loop over every picture withing the flow directory
         for index, picture in enumerate(pictures, 1):
@@ -249,14 +273,16 @@ class Base():
             # Check whether the new picture file exists after renaming
             grd.Filesystem.PathExist(pathToNewPicture)
 
-    def __Hashed(self, path, index):
-        '''Method which renames filenames with their hashed values
+    def __RenameHash(self, path, shoot, index):
+        '''Rename a picture
         
         Args:
-            index (string): Picture index number
             path (string): Path to the picture
+            shoot (string): Shootname of the picture
+            index (string): Picture index number
         '''
-        
+
+        # Get the extension of the original picture
         extension = path.split('.')[1]
 
         # Get absolute path to the picture
@@ -267,11 +293,11 @@ class Base():
 
         md5Hash = helper.HashFileMd5(path)
 
-        # Get the new name for the picture, obtain the first 10 hashvalues
-        hashedName = f"pb_{md5Hash[:10]}_{str(index).zfill(5)}.{extension}"
-        
+        # Get the new name for the picture
+        newName = f"pb_{str(index).zfill(5)}_{md5Hash[:10]}.{extension}"
+
         # Obtain the absolute path to the new picture name
-        pathToNewPicture = os.path.join(self.cwd, hashedName)
+        pathToNewPicture = os.path.join(self.cwd, newName)
         
         # Only rename the changed files
         if not pathToNewPicture == pathToPicture:
@@ -280,3 +306,6 @@ class Base():
 
             # Check whether the new picture file exists after renaming
             grd.Filesystem.PathExist(pathToNewPicture)
+
+            return pathToNewPicture
+        return pathToNewPicture
